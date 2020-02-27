@@ -15,7 +15,8 @@ import (
 	"net/http"
 	"time"
 
-	hms "github.com/nburmi/huawei-push"
+	"github.com/nburmi/huawei-push/push"
+	"github.com/nburmi/huawei-push/token"
 )
 
 func main() {
