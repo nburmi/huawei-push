@@ -3,6 +3,7 @@ package push
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -65,7 +66,7 @@ func TestPusher(t *testing.T) {
 
 	p := New("APP ID", tokener, cli)
 	_, err = p.PushValidate(&Message{
-		Data:   "simple data",
+		Data:   json.RawMessage("simple data"),
 		Tokens: []string{"DEVICE TOKEN"},
 	})
 

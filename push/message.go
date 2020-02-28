@@ -1,5 +1,7 @@
 package push
 
+import "encoding/json"
+
 const (
 	LOW    Importance = "LOW"
 	NORMAL Importance = "NORMAL"
@@ -22,14 +24,14 @@ type dataPush struct {
 
 // Message to be sent via HMS.
 type Message struct {
-	Data         string         `json:"data,omitempty"`
-	Notification *Notification  `json:"notification,omitempty"`
-	Android      *AndroidConfig `json:"android,omitempty"`
-	Webpush      *WebpushConfig `json:"webpush,omitempty"`
-	APNS         *APNSConfig    `json:"apns,omitempty"`
-	Tokens       []string       `json:"token,omitempty"`
-	Topic        string         `json:"-"`
-	Condition    string         `json:"condition,omitempty"`
+	Data         json.RawMessage `json:"data,omitempty"`
+	Notification *Notification   `json:"notification,omitempty"`
+	Android      *AndroidConfig  `json:"android,omitempty"`
+	Webpush      *WebpushConfig  `json:"webpush,omitempty"`
+	APNS         *APNSConfig     `json:"apns,omitempty"`
+	Tokens       []string        `json:"token,omitempty"`
+	Topic        string          `json:"-"`
+	Condition    string          `json:"condition,omitempty"`
 }
 
 // Notification is the basic notification template to use across all platforms.
