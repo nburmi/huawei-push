@@ -22,7 +22,7 @@ Params for gettting access token.
 	- ClientSecret: App secret key obtained when you create the app on HUAWEI Developer
 	- GrantType: if empty then value will be DeafultGrantType
 	- URL: if empty then value will be DefaultApiTokenURL
-	- HttpPoster: interface Post(url, contentType string, body io.Reader) (resp *http.Response, err error)
+	- HttpDoer: interface Do(req *http.Request) (*http.Response, error)
 */
 type Params struct {
 	ClientID     string
