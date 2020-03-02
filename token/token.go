@@ -14,6 +14,7 @@ import (
 const (
 	DeafultGrantType = "client_credentials"
 	DefaultAuthURL   = "https://oauth-login.cloud.huawei.com/oauth2/v2/token"
+	DefaultTryCount  = 1
 )
 
 /*
@@ -29,6 +30,7 @@ type Params struct {
 	ClientSecret string
 	GrantType    string
 	URL          string
+	TryCount     int
 	common.HTTPDoer
 }
 
@@ -54,60 +56,63 @@ type BuilderTokener interface {
 	SetSecret(string) BuilderTokener
 	SetHTTPDoer(common.HTTPDoer) BuilderTokener
 	SetGrantType(string) BuilderTokener
+	SetTryCount(int) BuilderTokener
 
 	Build() (Tokener, error)
 }
 
 func New() BuilderTokener {
-	return &tokenerReal{}
+	return &tokener{}
 }
 
-type tokenerReal struct {
+type tokener struct {
 	Params
+	req *http.Request
 }
 
-func (t *tokenerReal) SetByParams(p Params) BuilderTokener {
+func (t *tokener) SetByParams(p Params) BuilderTokener {
 	t.Params = p
 	return t
 }
 
-func (t *tokenerReal) SetID(id string) BuilderTokener {
+func (t *tokener) SetID(id string) BuilderTokener {
 	t.ClientID = id
 	return t
 }
 
-func (t *tokenerReal) SetSecret(s string) BuilderTokener {
+func (t *tokener) SetSecret(s string) BuilderTokener {
 	t.ClientSecret = s
 	return t
 }
 
-func (t *tokenerReal) SetHTTPDoer(p common.HTTPDoer) BuilderTokener {
+func (t *tokener) SetHTTPDoer(p common.HTTPDoer) BuilderTokener {
 	t.HTTPDoer = p
 	return t
 }
 
-func (t *tokenerReal) SetGrantType(g string) BuilderTokener {
+func (t *tokener) SetGrantType(g string) BuilderTokener {
 	t.GrantType = g
 	return t
 }
 
-func (t *tokenerReal) Get() (*Token, error) {
-	vals := url.Values{
-		"grant_type":    []string{t.GrantType},
-		"client_secret": []string{t.ClientSecret},
-		"client_id":     []string{t.ClientID},
+func (t *tokener) SetTryCount(c int) BuilderTokener {
+	t.TryCount = c
+	return t
+}
+
+func (t *tokener) Get() (*Token, error) {
+	var resp *http.Response
+	var err error
+
+	for i := 0; i < t.TryCount; i++ {
+		resp, err = t.Do(t.req)
+		if err == nil {
+			break
+		}
 	}
 
-	req, err := http.NewRequest("POST", t.URL, strings.NewReader(vals.Encode()))
 	if err != nil {
 		return nil, err
-	}
-
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	resp, err := t.Do(req)
-	if err != nil {
-		return &Token{StatusCode: resp.StatusCode}, err
 	}
 
 	var tok Token
@@ -122,9 +127,8 @@ func (t *tokenerReal) Get() (*Token, error) {
 }
 
 // Build and validate params
-func (t *tokenerReal) Build() (Tokener, error) {
+func (t *tokener) Build() (Tokener, error) {
 	var err error
-
 	switch {
 	case t.Params.ClientID == "":
 		err = errors.New("ClientID is empty")
@@ -137,7 +141,32 @@ func (t *tokenerReal) Build() (Tokener, error) {
 		fallthrough
 	case t.Params.URL == "":
 		t.Params.URL = DefaultAuthURL
+		fallthrough
+	case t.Params.TryCount == 0:
+		t.Params.TryCount = DefaultTryCount
+	}
+
+	if err == nil {
+		err = t.createRequest()
 	}
 
 	return t, err
+}
+
+func (t *tokener) createRequest() error {
+	body := url.Values{
+		"grant_type":    []string{t.GrantType},
+		"client_secret": []string{t.ClientSecret},
+		"client_id":     []string{t.ClientID},
+	}.Encode()
+
+	req, err := http.NewRequest("POST", t.URL, strings.NewReader(body))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	t.req = req
+
+	return nil
 }
