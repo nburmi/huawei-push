@@ -117,11 +117,6 @@ type BadgeNotification struct {
 	SetNum int    `json:"set_num,omitempty"`
 }
 
-// AndroidFCMOptions contains additional options for features provided by the FCM Android SDK.
-type AndroidFCMOptions struct {
-	AnalyticsLabel string `json:"analytics_label,omitempty"`
-}
-
 // WebpushConfig contains messaging options specific to the WebPush protocol.
 //
 // See https://tools.ietf.org/html/rfc8030#section-5 for additional details, and supported
