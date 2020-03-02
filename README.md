@@ -58,6 +58,7 @@ func main() {
 	//check response by documentation https://developer.huawei.com/consumer/en/doc/development/HMS-References/push-sendapi
 	/*
 	type Response struct {
+		StatusCode int    `json:"-"` //http status code
 		Code      string `json:"code"`
 		Message   string `json:"msg"`
 		RequestID string `json:"requestId"`

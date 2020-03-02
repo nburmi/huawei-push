@@ -15,9 +15,10 @@ import (
 const messagingEndpoint = "https://push-api.cloud.huawei.com/v1/%s/messages:send"
 
 type Response struct {
-	Code      string `json:"code"`
-	Message   string `json:"msg"`
-	RequestID string `json:"requestId"`
+	StatusCode int    `json:"-"`
+	Code       string `json:"code"`
+	Message    string `json:"msg"`
+	RequestID  string `json:"requestId"`
 }
 
 type Pusher interface {
@@ -68,7 +69,8 @@ func (p *pusher) push(d *dataPush) (*Response, error) {
 		return nil, err
 	}
 
-	var rs Response
+	rs := &Response{StatusCode: resp.StatusCode}
+
 	err = json.NewDecoder(resp.Body).Decode(&rs)
 	if err != nil && !errors.Is(err, io.EOF) {
 		return nil, err
@@ -76,5 +78,5 @@ func (p *pusher) push(d *dataPush) (*Response, error) {
 
 	resp.Body.Close()
 
-	return &rs, nil
+	return rs, nil
 }
