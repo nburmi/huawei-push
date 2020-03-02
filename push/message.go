@@ -49,7 +49,7 @@ type AndroidConfig struct {
 	TTL           string               `json:"ttl,omitempty"`          // Message cache time, in seconds.
 	BiTag         string               `json:"bi_tag,omitempty"`       // Tag of a message in a batch delivery task.
 	FastAppTarget int                  `json:"fast_app_target"`        // State of a mini program when a quick app sends a data message. 1 - dev, 2 - prod(default).
-	Data          map[string]string    `json:"data,omitempty"`         // if specified, overrides the Data field on Message type
+	Data          json.RawMessage      `json:"data,omitempty"`         // if specified, overrides the Data field on Message type
 	Notification  *AndroidNotification `json:"notification,omitempty"` // Android notification message structure.
 }
 
