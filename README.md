@@ -1,6 +1,6 @@
-### HMS server client push. Custom realization.
+### HMS server client push. Custom realization. Auth Client Password Mode.
 
-- auto auth token refresher
+- auto auth token refresher 
 - sending push through hms
 
 Documentation - [api HMS push](https://developer.huawei.com/consumer/en/doc/development/HMS-References/push-sendapi)</br>
@@ -37,25 +37,16 @@ func main() {
 
 	ctx := context.Background()
 
-	// updating the token before it expires.
+	// updating the token before it expires. Clent
 	tokener, err = token.NewRefresher(ctx, tokener).SetSubTime(time.Second * 5).Build()
-	if err != nil {
-		//handle error
-	}
-
-	// check response and create error
-	tokener = token.NewCheckTokener(tokener)
 	if err != nil {
 		//handle error
 	}
 
 	pusher := push.New(hmsParams.ClientID, tokener, cli)
 
-	//for check response and return error
-	pusher = push.NewResponseChecker(pusher)
-
 	//send push
-	_, err = pusher.Push(&push.Message{
+	resp, err = pusher.Push(&push.Message{
 		Data:   "data",
 		Tokens: []string{"DEVICE TOKEN 1"},
 	})
@@ -63,6 +54,15 @@ func main() {
 	if err != nil {
 		//handle error
 	}
+
+	//check response by documentation https://developer.huawei.com/consumer/en/doc/development/HMS-References/push-sendapi
+	/*
+	type Response struct {
+		Code      string `json:"code"`
+		Message   string `json:"msg"`
+		RequestID string `json:"requestId"`
+	}
+	*/
 }
 
 ```
