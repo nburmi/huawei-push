@@ -46,7 +46,20 @@ func (p *pusher) PushValidate(m *Message) (*Response, error) {
 	return p.push(&dataPush{M: m, ValidateOnly: true})
 }
 
+func checkAndSetDefaultVals(m *Message) {
+	/*
+		FastAppTarget
+			1: development state.
+			2: production state (default value).
+	*/
+	if m.Android != nil && m.Android.FastAppTarget == 0 {
+		m.Android.FastAppTarget = 2
+	}
+}
+
 func (p *pusher) push(d *dataPush) (*Response, error) {
+	checkAndSetDefaultVals(d.M)
+
 	tok, err := p.Tokener.Get()
 	if err != nil {
 		return nil, err
