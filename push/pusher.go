@@ -15,10 +15,11 @@ import (
 const messagingEndpoint = "https://push-api.cloud.huawei.com/v1/%s/messages:send"
 
 type Response struct {
-	StatusCode int    `json:"-"`
-	Code       string `json:"code"`
-	Message    string `json:"msg"`
-	RequestID  string `json:"requestId"`
+	StatusCode    int    `json:"-"`
+	Code          string `json:"code"`
+	Message       string `json:"msg"`
+	RequestID     string `json:"requestId"`
+	IllegalTokens string `json:"illegal_token,omitempty"`
 }
 
 type Pusher interface {
