@@ -1,7 +1,5 @@
 package push
 
-import "encoding/json"
-
 const (
 	LOW    Importance = "LOW"
 	NORMAL Importance = "NORMAL"
@@ -24,14 +22,14 @@ type dataPush struct {
 
 // Message to be sent via HMS.
 type Message struct {
-	Data         json.RawMessage `json:"data,omitempty"`
-	Notification *Notification   `json:"notification,omitempty"`
-	Android      *AndroidConfig  `json:"android,omitempty"`
-	Webpush      *WebpushConfig  `json:"webpush,omitempty"`
-	APNS         *APNSConfig     `json:"apns,omitempty"`
-	Tokens       []string        `json:"token,omitempty"`
-	Topic        string          `json:"-"`
-	Condition    string          `json:"condition,omitempty"`
+	Data         string         `json:"data,omitempty"`
+	Notification *Notification  `json:"notification,omitempty"`
+	Android      *AndroidConfig `json:"android,omitempty"`
+	Webpush      *WebpushConfig `json:"webpush,omitempty"`
+	APNS         *APNSConfig    `json:"apns,omitempty"`
+	Tokens       []string       `json:"token,omitempty"`
+	Topic        string         `json:"-"`
+	Condition    string         `json:"condition,omitempty"`
 }
 
 // Notification is the basic notification template to use across all platforms.
@@ -49,7 +47,7 @@ type AndroidConfig struct {
 	TTL           string               `json:"ttl,omitempty"`          // Message cache time, in seconds.
 	BiTag         string               `json:"bi_tag,omitempty"`       // Tag of a message in a batch delivery task.
 	FastAppTarget int                  `json:"fast_app_target"`        // State of a mini program when a quick app sends a data message. 1 - dev, 2 - prod(default).
-	Data          json.RawMessage      `json:"data,omitempty"`         // if specified, overrides the Data field on Message type
+	Data          string               `json:"data,omitempty"`         // if specified, overrides the Data field on Message type
 	Notification  *AndroidNotification `json:"notification,omitempty"` // Android notification message structure.
 }
 
