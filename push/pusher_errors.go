@@ -2,10 +2,8 @@ package push
 
 import "fmt"
 
-const success = "80000000"
-
 type PusherError struct {
-	code string
+	code Code
 	desc string
 }
 
@@ -41,7 +39,7 @@ func (p *checker) PushValidate(m *Message) (*Response, error) {
 }
 
 func (p *checker) checkResponse(r *Response) error {
-	if r.Code != success {
+	if r.Code != Success {
 		return &PusherError{code: r.Code, desc: r.Message}
 	}
 
