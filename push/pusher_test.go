@@ -3,7 +3,6 @@ package push
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -66,7 +65,7 @@ func TestPusher(t *testing.T) {
 
 	p := New("APP ID", tokener, cli)
 	_, err = p.PushValidate(&Message{
-		Data:   json.RawMessage(`{"msg":"this is message", "title":"simple title"}`),
+		Data:   "{\"msg\":\"this is message\", \"title\":\"simple title\"}",
 		Tokens: []string{"DEVICE TOKEN"},
 	})
 
@@ -74,7 +73,7 @@ func TestPusher(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := `{"message":{"data":{"msg":"this is message","title":"simple title"},"token":["DEVICE TOKEN"]},"validate_only":true}`
+	expected := `{"message":{"data":"{\"msg\":\"this is message\", \"title\":\"simple title\"}","token":["DEVICE TOKEN"]},"validate_only":true}`
 	if expected != string(cli.body) {
 		t.Errorf("body not equal, expected %s, got %s", expected, cli.body)
 	}
