@@ -9,11 +9,13 @@ const (
 	PRIVATE               Visibilty = "PRIVATE"
 	PUBLIC                Visibilty = "PUBLIC"
 	SECRET                Visibilty = "SECRET"
+)
 
+const (
 	Custom Taping = iota + 1
 	URL
 	StartApp
-	RickMedia
+	RichMedia
 )
 
 type Taping int
