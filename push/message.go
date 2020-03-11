@@ -9,7 +9,14 @@ const (
 	PRIVATE               Visibilty = "PRIVATE"
 	PUBLIC                Visibilty = "PUBLIC"
 	SECRET                Visibilty = "SECRET"
+
+	Custom Taping = iota + 1
+	URL
+	StartApp
+	RickMedia
 )
+
+type Taping int
 
 type Importance string
 
@@ -89,7 +96,7 @@ type AndroidNotification struct {
 }
 
 type ClickAction struct {
-	Type         int    `json:"type,omitempty"`
+	Type         Taping `json:"type,omitempty"`
 	Intent       string `json:"intent,omitempty"`
 	URL          string `json:"url,omitempty"`
 	RichResource string `json:"rich_resource,omitempty"`
