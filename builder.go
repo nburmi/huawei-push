@@ -34,6 +34,7 @@ func (b *builder) SetAutoRefresherTokener(ctx context.Context) Builder {
 }
 
 func (b *builder) SetSubTimeTokener(sub time.Duration) Builder {
+	b.isRefresher = true
 	b.subTime = sub
 	return b
 }

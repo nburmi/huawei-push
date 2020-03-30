@@ -67,7 +67,6 @@ func New() BuilderTokener {
 
 type tokener struct {
 	Params
-	req *http.Request
 }
 
 func (t *tokener) SetByParams(p Params) BuilderTokener {
@@ -105,7 +104,7 @@ func (t *tokener) Get() (*Token, error) {
 	var err error
 
 	for i := 0; i < t.TryCount; i++ {
-		resp, err = t.Do(t.req)
+		resp, err = t.Do(t.createRequest())
 		if err == nil {
 			break
 		}
@@ -146,27 +145,18 @@ func (t *tokener) Build() (Tokener, error) {
 		t.Params.TryCount = DefaultTryCount
 	}
 
-	if err == nil {
-		err = t.createRequest()
-	}
-
 	return t, err
 }
 
-func (t *tokener) createRequest() error {
+func (t *tokener) createRequest() *http.Request {
 	body := url.Values{
 		"grant_type":    []string{t.GrantType},
 		"client_secret": []string{t.ClientSecret},
 		"client_id":     []string{t.ClientID},
 	}.Encode()
 
-	req, err := http.NewRequest("POST", t.URL, strings.NewReader(body))
-	if err != nil {
-		return err
-	}
-
+	req, _ := http.NewRequest("POST", t.URL, strings.NewReader(body))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	t.req = req
 
-	return nil
+	return req
 }
