@@ -42,7 +42,7 @@ func (m *mockHTTPDoer) Do(req *http.Request) (resp *http.Response, err error) {
 
 func TestGetToken(t *testing.T) {
 	p := &mockHTTPDoer{}
-	tokener, err := New().SetByParams(Params{
+	tokener, err := New().SetByParams(&Params{
 		ClientID:     "AppID",
 		ClientSecret: "AppSecret",
 		HTTPDoer:     p,

@@ -2,7 +2,7 @@ package token
 
 import "fmt"
 
-//NewResponseChecker token errors check error and return new error
+// NewResponseChecker token errors check error and return new error
 func NewResponseChecker(t Tokener) Tokener {
 	return &checker{t}
 }

@@ -34,7 +34,7 @@ type Params struct {
 	common.HTTPDoer
 }
 
-//Client Password Mode
+// Client Password Mode
 type Token struct {
 	StatusCode       int
 	AccessToken      string `json:"access_token"`
@@ -50,7 +50,7 @@ type Tokener interface {
 }
 
 type BuilderTokener interface {
-	SetByParams(Params) BuilderTokener
+	SetByParams(*Params) BuilderTokener
 
 	SetID(string) BuilderTokener
 	SetSecret(string) BuilderTokener
@@ -69,8 +69,8 @@ type tokener struct {
 	Params
 }
 
-func (t *tokener) SetByParams(p Params) BuilderTokener {
-	t.Params = p
+func (t *tokener) SetByParams(p *Params) BuilderTokener {
+	t.Params = *p
 	return t
 }
 
@@ -101,11 +101,13 @@ func (t *tokener) SetTryCount(c int) BuilderTokener {
 
 func (t *tokener) Get() (*Token, error) {
 	var resp *http.Response
+
 	var err error
 
 	for i := 0; i < t.TryCount; i++ {
 		resp, err = t.Do(t.createRequest())
 		if err == nil {
+			defer resp.Body.Close()
 			break
 		}
 	}
@@ -115,12 +117,11 @@ func (t *tokener) Get() (*Token, error) {
 	}
 
 	var tok Token
+
 	err = json.NewDecoder(resp.Body).Decode(&tok)
 	if err != nil && !errors.Is(err, io.EOF) {
 		return nil, err
 	}
-
-	resp.Body.Close()
 
 	return &tok, nil
 }
@@ -128,6 +129,7 @@ func (t *tokener) Get() (*Token, error) {
 // Build and validate params
 func (t *tokener) Build() (Tokener, error) {
 	var err error
+
 	switch {
 	case t.Params.ClientID == "":
 		err = errors.New("ClientID is empty")

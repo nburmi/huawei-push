@@ -47,7 +47,7 @@ func TestPusher(t *testing.T) {
 	cli := &mockHTTPDoer{}
 
 	tokener, err := token.New().
-		SetByParams(token.Params{
+		SetByParams(&token.Params{
 			HTTPDoer:     cli,
 			ClientID:     "APP ID",
 			ClientSecret: "APP SECRET"}).

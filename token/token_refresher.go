@@ -53,6 +53,7 @@ func (t *tokenRefresher) CustomExpireTime(c time.Duration) RefresherBuilder {
 
 func (t *tokenRefresher) Build() (Tokener, error) {
 	var err error
+
 	switch {
 	case t.Tokener == nil:
 		err = errors.New("Tokener is nil")
@@ -66,6 +67,7 @@ func (t *tokenRefresher) Build() (Tokener, error) {
 // initAndStart - get Token and Start Timer
 func (t *tokenRefresher) initAndStart() {
 	t.refreshToken()
+
 	t.timer = time.NewTimer(t.getExpiteTime())
 	go t.eventLoop()
 }
@@ -75,6 +77,7 @@ func (t *tokenRefresher) Get() (*Token, error) {
 
 	t.mu.RLock()
 	defer t.mu.RUnlock()
+
 	return t.token, t.err
 }
 
@@ -107,7 +110,10 @@ func (t *tokenRefresher) getExpiteTime() time.Duration {
 	if t.custom > 0 {
 		resetTime = t.custom
 	}
-	resetTime -= t.sub
+
+	if tm := resetTime - t.sub; tm > 0 {
+		resetTime = tm
+	}
 
 	return resetTime
 }

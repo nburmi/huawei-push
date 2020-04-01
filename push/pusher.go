@@ -27,8 +27,8 @@ type Pusher interface {
 	PushValidate(*Message) (*Response, error)
 }
 
-func New(AppID string, t token.Tokener, d common.HTTPDoer) Pusher {
-	return &pusher{endpoint: fmt.Sprintf(messagingEndpoint, AppID), Tokener: t, HTTPDoer: d}
+func New(appID string, t token.Tokener, d common.HTTPDoer) Pusher {
+	return &pusher{endpoint: fmt.Sprintf(messagingEndpoint, appID), Tokener: t, HTTPDoer: d}
 }
 
 type pusher struct {
@@ -83,14 +83,14 @@ func (p *pusher) push(d *dataPush) (*Response, error) {
 		return nil, err
 	}
 
+	defer resp.Body.Close()
+
 	rs := &Response{StatusCode: resp.StatusCode}
 
 	err = json.NewDecoder(resp.Body).Decode(&rs)
 	if err != nil && !errors.Is(err, io.EOF) {
 		return nil, err
 	}
-
-	resp.Body.Close()
 
 	return rs, nil
 }

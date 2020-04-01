@@ -1,4 +1,4 @@
-package push
+package hms
 
 import (
 	"context"
@@ -15,12 +15,12 @@ type Builder interface {
 	Build() (push.Pusher, error)
 }
 
-func New(p token.Params) Builder {
+func New(p *token.Params) Builder {
 	return &builder{p: p}
 }
 
 type builder struct {
-	p token.Params
+	p *token.Params
 
 	isRefresher bool
 	subTime     time.Duration
@@ -30,12 +30,14 @@ type builder struct {
 func (b *builder) SetAutoRefresherTokener(ctx context.Context) Builder {
 	b.isRefresher = true
 	b.ctx = ctx
+
 	return b
 }
 
 func (b *builder) SetSubTimeTokener(sub time.Duration) Builder {
 	b.isRefresher = true
 	b.subTime = sub
+
 	return b
 }
 
