@@ -24,7 +24,7 @@ func main() {
 		Timeout: time.Second,
 	}
 
-	hmsParams := token.Params{
+	hmsParams := &token.Params{
 		HTTPDoer:     cli,
 		ClientID:     "Client ID(App ID)",
 		ClientSecret: "Client Secret(App secret)",
@@ -46,7 +46,7 @@ func main() {
 	pusher := push.New(hmsParams.ClientID, tokener, cli)
 
 	//send push
-	resp, err = pusher.Push(&push.Message{
+	resp, err := pusher.Push(&push.Message{
 		Data:   "data",
 		Tokens: []string{"DEVICE TOKEN 1"},
 	})
